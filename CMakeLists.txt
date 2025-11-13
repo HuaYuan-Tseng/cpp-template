@@ -35,12 +35,21 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Generate the source.cmake file.
-execute_process(
-    COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/set_source.sh
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    RESULT_VARIABLE GEN_SOURCE_RES
-    ERROR_VARIABLE GEN_SOURCE_ERR
-)
+if(WIN32)
+    execute_process(
+        COMMAND powershell -ExecutionPolicy Bypass -File ${CMAKE_SOURCE_DIR}/cmake/set_source.ps1
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        RESULT_VARIABLE GEN_SOURCE_RES
+        ERROR_VARIABLE GEN_SOURCE_ERR
+    )
+else()
+    execute_process(
+        COMMAND bash ${CMAKE_SOURCE_DIR}/cmake/set_source.sh
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        RESULT_VARIABLE GEN_SOURCE_RES
+        ERROR_VARIABLE GEN_SOURCE_ERR
+    )
+endif()
 
 if(NOT GEN_SOURCE_RES EQUAL 0)
     message(FATAL_ERROR "Failed to generate source.cmake: ${GEN_SOURCE_ERR}")
